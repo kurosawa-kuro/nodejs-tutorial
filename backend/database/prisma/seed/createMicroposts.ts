@@ -9,19 +9,19 @@ export async function createMicroposts(userEntities: User[]) {
   const microposts = [
     {
       id: 1,
-      user: user[0].id,
+      user_id: user[0].id,
       image_path: "image_url1",
       description: "Description1 posted by User",
     },
     {
       id: 2,
-      user: user[0].id,
+      user_id: user[0].id,
       image_path: "image_url2",
       description: "Description2 posted by User",
     },
     {
       id: 3,
-      user: user[1].id,
+      user_id: user[1].id,
       image_path: "image_url3",
       description: "Description3 posted by User2",
     },
@@ -29,11 +29,11 @@ export async function createMicroposts(userEntities: User[]) {
 
   await Promise.all(
     microposts.map((micropost) => {
-      const { id, user, image_path, description } = micropost;
+      const { id, user_id, image_path, description } = micropost;
       return db.microposts.create({
         data: {
           id,
-          user_id: user,
+          user_id,
           image_path,
           description,
         },
