@@ -1,0 +1,75 @@
+// backend\database\prisma\schema.prisma
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int             @id @default(autoincrement())
+  name              String
+  email             String          @unique @map("email")
+  password_digest   String          @map("password_digest")
+  remember_digest   String?
+  avatar_path       String?
+  admin             Boolean         @default(false)
+  activation_digest String?
+  activated         Boolean         @default(false)
+  activated_at      DateTime?
+  reset_digest      String?
+  reset_sent_at     DateTime?
+  microposts        Microposts[]
+  follower          Relationships[] @relation("follower")
+  followed          Relationships[] @relation("followed")
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @updatedAt
+}
+
+model Relationships {
+  follower    User     @relation("follower", fields: [follower_id], references: [id])
+  follower_id Int
+  followed    User     @relation("followed", fields: [followed_id], references: [id])
+  followed_id Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+
+  @@unique([follower_id, followed_id])
+}
+
+model Microposts {
+  id            Int           @id @default(autoincrement())
+  user_id       Int
+  description   String
+  image_path    String?
+  user          User          @relation(fields: [user_id], references: [id])
+  tags_on_posts TagsOnPosts[]
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+}
+
+model Tag {
+  id            Int           @id @default(autoincrement())
+  name          String
+  tags_on_posts TagsOnPosts[]
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+}
+
+model TagsOnPosts {
+  post_id    Int
+  tag_id     Int
+  microposts Microposts @relation(fields: [post_id], references: [id])
+  tag        Tag        @relation(fields: [tag_id], references: [id])
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  @@id([post_id, tag_id])
+  @@map("tags_on_posts")
+}
