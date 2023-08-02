@@ -63,7 +63,7 @@ async function main() {
     // console.log("main.js readSpecificTagPosts() specificTagPosts:");
     // console.dir(specificTagPosts, { depth: null });
 
-    const follower = await readFollowedUsersByFollowerId();
+    const follower = await readFollowedUsersByFollowerId(userEntities[1].id);
     console.log("main.js readFollowedUsersByFollowerId() follower:", follower);
 
     // console.log("main.js readUsersFollowingSpecificUser()");

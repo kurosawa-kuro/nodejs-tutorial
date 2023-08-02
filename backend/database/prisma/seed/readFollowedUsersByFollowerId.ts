@@ -1,11 +1,11 @@
 import { db } from "../prismaClient";
 
-export async function readFollowedUsersByFollowerId() {
+export async function readFollowedUsersByFollowerId(follower_id: number) {
   // readFollowedUsersByFollowerId
   // followerIdが3のユーザーがフォローしているユーザーを取得する
   const follows = await db.relationships.findMany({
     where: {
-      follower_id: 2,
+      follower_id,
     },
     include: {
       followed: {
