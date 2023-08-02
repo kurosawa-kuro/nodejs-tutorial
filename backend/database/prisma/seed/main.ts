@@ -4,92 +4,55 @@ import { db } from "../prismaClient";
 import { clearDatabase } from "./clearDatabase";
 import { createUsers } from "./createUsers";
 import { createPosts } from "./createPosts";
-import { createTags } from "./createTags";
-import { createPostTags } from "./createPostTags";
-import { readAllPostTags } from "./readAllPostTags";
 import { readSpecificUserPosts } from "./readSpecificUserPosts";
-import { readSpecificPostTags } from "./readSpecificPostTags";
-// import { readSpecificTagPosts } from "./readSpecificTagPosts";
-import { readFollowedUsersByFollowerId } from "./readFollowedUsersByFollowerId";
-import { readUsersFollowingSpecificUser } from "./readUsersFollowingSpecificUser";
 import { createUsersAndFollows } from "./createUsersAndFollows";
-import { readFollowStatusOfAllUsersForSpecificUser } from "./readFollowStatusOfAllUsersForSpecificUser";
+import { readFollowersByUserId } from "./readFollowersByUserId";
+import { readFolloweesByUserId } from "./readFolloweesByUserId";
 
 async function main() {
   try {
-    console.log("main.js clearDatabase()");
+    console.log("Starting to clear database...");
     await clearDatabase();
+    console.log("Database cleared.");
 
-    console.log("main.js createUsers()");
-    const userEntities = await createUsers();
-    console.log("main.js createUsers() userEntities:", userEntities);
+    console.log("Starting to create users...");
+    const users = await createUsers();
+    console.log("Users created:", users);
 
-    console.log("main.js createPosts()");
-    const postEntities = await createPosts(userEntities);
-    console.log("main.js createPosts() postEntities:", postEntities);
+    console.log("Starting to create posts...");
+    const posts = await createPosts(users);
+    console.log("Posts created:", posts);
 
-    // console.log("main.js createTags()");
-    // const tagEntities = await createTags();
-    // console.log("main.js createTags() tagEntities:", tagEntities);
+    console.log("Starting to create user follows...");
+    const follows = await createUsersAndFollows();
+    console.log("User follows created:", follows);
 
-    // console.log("main.js createPostTags()");
-    // const postTagEntities = await createPostTags(postEntities, tagEntities);
-    // console.log("main.js createPostTags() postTagEntities:", postTagEntities);
-
-    console.log("main.js createUsersAndFollows()");
-    const followsEntities = await createUsersAndFollows();
+    console.log("Retrieving specific user posts...");
+    const userPosts = await readSpecificUserPosts();
     console.log(
-      "main.js createUsersAndFollows() followsEntities:",
-      followsEntities
+      "Specific user posts retrieved",
+      JSON.stringify(userPosts, null, 2)
     );
 
-    console.log("main.js readSpecificUserPosts()");
-    const specificPostTags = await readSpecificUserPosts();
-    console.log("main.js readSpecificUserPosts() readSpecificUserPosts:");
-    console.dir(specificPostTags, { depth: null });
+    console.log(`Retrieving followers for user ID: ${users[1].id}...`);
+    const followersOfUser = await readFollowersByUserId(users[1].id);
+    console.log("Followers retrieved ", followersOfUser);
 
-    // console.log("main.js readAllPostTags()");
-    // const allPostTags = await readAllPostTags();
-    // console.log("main.js readAllPostTags() allPostTags:");
-    // console.dir(allPostTags, { depth: null });
-
-    // console.log("main.js readSpecificPostTags()");
-    // const specificPostTags = await readSpecificPostTags(postEntities);
-    // console.log("main.js readSpecificPostTags() specificPostTags:");
-    // console.dir(specificPostTags, { depth: null });
-
-    // console.log("main.js readSpecificTagPosts()");
-    // const specificTagPosts = await readSpecificTagPosts(tagEntities);
-    // console.log("main.js readSpecificTagPosts() specificTagPosts:");
-    // console.dir(specificTagPosts, { depth: null });
-
-    const follower = await readFollowedUsersByFollowerId(userEntities[1].id);
-    console.log("main.js readFollowedUsersByFollowerId() follower:", follower);
-
-    // console.log("main.js readUsersFollowingSpecificUser()");
-    // const specificFollowers = await readUsersFollowingSpecificUser();
-    // console.log(
-    //   "main.js readUsersFollowingSpecificUser() specificFollowers:",
-    //   specificFollowers
-    // );
-
-    // console.log("main.js readFollowStatusOfAllUsersForSpecificUser()");
-    // const followStatus = await readFollowStatusOfAllUsersForSpecificUser();
-    // console.log(
-    //   "main.js readFollowStatusOfAllUsersForSpecificUser() followStatus:",
-    //   followStatus
-    // );
+    console.log(`Retrieving followees for user ID: ${users[1].id}...`);
+    const followeesOfUser = await readFolloweesByUserId(users[1].id);
+    console.log("Followees retrieved ", followeesOfUser);
   } catch (error: any) {
-    console.error("error.message", error.meta);
+    console.error("An error occurred:", error.meta);
   }
 }
 
 main()
   .catch((error: any) => {
-    console.log("error", error);
-    console.error("error.message", error.meta);
+    console.error("Uncaught error:", error);
     process.exit(1);
   })
   .finally(async () => {
+    console.log("Disconnecting database...");
     await db.$disconnect();
+    console.log("Database disconnected.");
   });
