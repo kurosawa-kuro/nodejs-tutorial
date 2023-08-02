@@ -1,7 +1,7 @@
 // backend\database\prisma\seed\main.ts
 
 import { db } from "../prismaClient";
-import { clearDatabase } from "./clearDatabase";
+import { deleteAllData } from "./deleteAllData";
 import { createUsers } from "./createUsers";
 import { createPosts } from "./createPosts";
 import { readSpecificUserPosts } from "./readSpecificUserPosts";
@@ -12,7 +12,7 @@ import { readFolloweesByUserId } from "./readFolloweesByUserId";
 async function main() {
   try {
     console.log("Starting to clear database...");
-    await clearDatabase();
+    await deleteAllData();
     console.log("Database cleared.");
 
     console.log("Starting to create users...");

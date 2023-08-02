@@ -2,7 +2,7 @@
 
 import { db } from "../prismaClient";
 
-export async function clearDatabase() {
+export async function deleteAllData() {
   await db.$executeRaw`SET FOREIGN_KEY_CHECKS=0;`;
   await db.$executeRaw`TRUNCATE TABLE relationships;`;
   await db.$executeRaw`TRUNCATE TABLE tags_on_posts;`;
