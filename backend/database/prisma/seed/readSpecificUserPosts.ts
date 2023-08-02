@@ -1,11 +1,9 @@
-import { Tag } from "@prisma/client";
 import { db } from "../prismaClient";
-import { TagWithUserAndPosts } from "../../../interfaces";
 
-export async function readSpecificUserPosts() {
+export async function readPostsByUserId(userId: number) {
   const specificUserPosts = await db.user.findUnique({
     where: {
-      id: 2,
+      id: userId,
     },
     select: {
       id: true,

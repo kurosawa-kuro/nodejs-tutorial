@@ -3,10 +3,10 @@
 import { User, Prisma } from "@prisma/client";
 import { db } from "../prismaClient";
 
-export async function createPosts(userEntities: User[]) {
+export async function createMicroposts(userEntities: User[]) {
   const user = userEntities.filter((user) => !user.admin);
 
-  const posts = [
+  const microposts = [
     {
       id: 1,
       user: user[0].id,
@@ -28,8 +28,8 @@ export async function createPosts(userEntities: User[]) {
   ];
 
   await Promise.all(
-    posts.map((post) => {
-      const { id, user, image_path, description } = post;
+    microposts.map((micropost) => {
+      const { id, user, image_path, description } = micropost;
       return db.microposts.create({
         data: {
           id,

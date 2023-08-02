@@ -3,44 +3,56 @@
 import { db } from "../prismaClient";
 import { deleteAllData } from "./deleteAllData";
 import { createUsers } from "./createUsers";
-import { createPosts } from "./createPosts";
-import { readSpecificUserPosts } from "./readSpecificUserPosts";
+import { createMicroposts } from "./createMicroposts";
 import { createUsersAndFollows } from "./createUsersAndFollows";
+import { readPostsByUserId } from "./readSpecificUserPosts";
 import { readFollowersByUserId } from "./readFollowersByUserId";
 import { readFolloweesByUserId } from "./readFolloweesByUserId";
 
 async function main() {
   try {
-    console.log("Starting to clear database...");
+    console.log("Starting database clearance...");
     await deleteAllData();
     console.log("Database cleared.");
 
-    console.log("Starting to create users...");
+    console.log("Creating users...");
     const users = await createUsers();
-    console.log("Users created:", users);
+    console.log("Users created. Data:", JSON.stringify(users, null, 2));
 
-    console.log("Starting to create posts...");
-    const posts = await createPosts(users);
-    console.log("Posts created:", posts);
-
-    console.log("Starting to create user follows...");
-    const follows = await createUsersAndFollows();
-    console.log("User follows created:", follows);
-
-    console.log("Retrieving specific user posts...");
-    const userPosts = await readSpecificUserPosts();
+    console.log("Creating microposts...");
+    const microposts = await createMicroposts(users);
     console.log(
-      "Specific user posts retrieved",
+      "Microposts created. Data:",
+      JSON.stringify(microposts, null, 2)
+    );
+
+    console.log("Creating user follows...");
+    const follows = await createUsersAndFollows();
+    console.log(
+      "User follows created. Data:",
+      JSON.stringify(follows, null, 2)
+    );
+
+    console.log(`Retrieving posts for user ID: ${users[1].id}...`);
+    const userPosts = await readPostsByUserId(users[1].id);
+    console.log(
+      "Specific user posts retrieved. Data:",
       JSON.stringify(userPosts, null, 2)
     );
 
     console.log(`Retrieving followers for user ID: ${users[1].id}...`);
-    const followersOfUser = await readFollowersByUserId(users[1].id);
-    console.log("Followers retrieved ", followersOfUser);
+    const followers = await readFollowersByUserId(users[1].id);
+    console.log(
+      "Followers retrieved. Data:",
+      JSON.stringify(followers, null, 2)
+    );
 
     console.log(`Retrieving followees for user ID: ${users[1].id}...`);
-    const followeesOfUser = await readFolloweesByUserId(users[1].id);
-    console.log("Followees retrieved ", followeesOfUser);
+    const followees = await readFolloweesByUserId(users[1].id);
+    console.log(
+      "Followees retrieved. Data:",
+      JSON.stringify(followees, null, 2)
+    );
   } catch (error: any) {
     console.error("An error occurred:", error.meta);
   }
