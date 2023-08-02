@@ -4,8 +4,8 @@ import { User } from "@prisma/client";
 import { db } from "../prismaClient";
 import { hashPassword } from "../../../utils";
 
-export async function createUsersAndFollows() {
-  const dataPromises = Array.from({ length: 8 }, async (_, i) => {
+export async function createUsers() {
+  const usersDataPromises = Array.from({ length: 8 }, async (_, i) => {
     const userNumber = i + 4;
     return {
       email: `user${userNumber}@email.com`,
@@ -14,48 +14,34 @@ export async function createUsersAndFollows() {
     };
   });
 
-  const data = await Promise.all(dataPromises);
+  const usersData = await Promise.all(usersDataPromises);
 
   await db.user.createMany({
-    data,
+    data: usersData,
   });
 
-  const users: User[] = await db.user.findMany();
+  return await db.user.findMany();
+}
 
-  const follows = [
-    {
-      follower_id: users[1].id,
-      followed_id: users[2].id,
-    },
-    {
-      follower_id: users[1].id,
-      followed_id: users[3].id,
-    },
-    {
-      follower_id: users[1].id,
-      followed_id: users[4].id,
-    },
-    {
-      follower_id: users[2].id,
-      followed_id: users[1].id,
-    },
-    {
-      follower_id: users[2].id,
-      followed_id: users[3].id,
-    },
-    {
-      follower_id: users[3].id,
-      followed_id: users[4].id,
-    },
+export async function createFollows(users: User[]) {
+  const followsData = [
+    { follower_id: users[1].id, followed_id: users[2].id },
+    { follower_id: users[1].id, followed_id: users[3].id },
+    { follower_id: users[1].id, followed_id: users[4].id },
+    { follower_id: users[2].id, followed_id: users[1].id },
+    { follower_id: users[2].id, followed_id: users[3].id },
+    { follower_id: users[3].id, followed_id: users[4].id },
   ];
 
   await Promise.all(
-    follows.map((follow) => {
-      return db.relationships.create({
-        data: follow,
-      });
-    })
+    followsData.map((follow) => db.relationships.create({ data: follow }))
   );
 
   return await db.relationships.findMany();
+}
+
+export async function createUsersAndFollows() {
+  const users = await createUsers();
+  const follows = await createFollows(users);
+  return follows;
 }
