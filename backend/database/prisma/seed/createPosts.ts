@@ -4,39 +4,42 @@ import { User, Prisma } from "@prisma/client";
 import { db } from "../prismaClient";
 
 export async function createPosts(userEntities: User[]) {
-  const user = userEntities.filter((user) => !user.isAdmin);
+  const user = userEntities.filter((user) => !user.admin);
 
-  const posts: Prisma.PostCreateInput[] = [
+  const posts = [
     {
-      user: { connect: { id: user[0].id } },
-      imagePath: "image_url1",
-      description: "post_description1",
+      id: 1,
+      user: user[0].id,
+      image_path: "image_url1",
+      description: "Description1 posted by User",
     },
     {
-      user: { connect: { id: user[0].id } },
-      imagePath: "image_url2",
-      description: "post_description2",
+      id: 2,
+      user: user[0].id,
+      image_path: "image_url2",
+      description: "Description2 posted by User",
     },
     {
-      user: { connect: { id: user[1].id } },
-      imagePath: "image_url3",
-      description: "post_description3",
+      id: 3,
+      user: user[1].id,
+      image_path: "image_url3",
+      description: "Description3 posted by User2",
     },
-    // ... add more posts as needed
   ];
 
   await Promise.all(
     posts.map((post) => {
-      const { user, imagePath, description } = post;
-      return db.post.create({
+      const { id, user, image_path, description } = post;
+      return db.microposts.create({
         data: {
-          user,
-          imagePath,
+          id,
+          user_id: user,
+          image_path,
           description,
         },
       });
     })
   );
 
-  return await db.post.findMany();
+  return await db.microposts.findMany();
 }

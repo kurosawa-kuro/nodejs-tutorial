@@ -4,12 +4,12 @@ import { User } from "@prisma/client";
 import { db } from "../prismaClient";
 
 export async function createUsersAndFollows() {
-  const data = Array.from({ length: 7 }, (_, i) => {
-    const userNumber = i + 3;
+  const data = Array.from({ length: 8 }, (_, i) => {
+    const userNumber = i + 4;
     return {
       email: `user${userNumber}@email.com`,
       name: `User${userNumber}`,
-      password: "123456",
+      password_digest: "123456",
     };
   });
 
@@ -21,86 +21,38 @@ export async function createUsersAndFollows() {
 
   const follows = [
     {
-      follower: {
-        connect: {
-          id: users[1].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[2].id,
-        },
-      },
+      follower_id: users[1].id,
+      followed_id: users[2].id,
     },
     {
-      follower: {
-        connect: {
-          id: users[1].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[3].id,
-        },
-      },
+      follower_id: users[1].id,
+      followed_id: users[3].id,
     },
     {
-      follower: {
-        connect: {
-          id: users[1].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[4].id,
-        },
-      },
+      follower_id: users[1].id,
+      followed_id: users[4].id,
     },
     {
-      follower: {
-        connect: {
-          id: users[2].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[1].id,
-        },
-      },
+      follower_id: users[2].id,
+      followed_id: users[1].id,
     },
     {
-      follower: {
-        connect: {
-          id: users[2].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[3].id,
-        },
-      },
+      follower_id: users[2].id,
+      followed_id: users[3].id,
     },
     {
-      follower: {
-        connect: {
-          id: users[3].id,
-        },
-      },
-      followee: {
-        connect: {
-          id: users[4].id,
-        },
-      },
+      follower_id: users[3].id,
+      followed_id: users[4].id,
     },
   ];
 
   await Promise.all(
     follows.map((follow) => {
-      return db.follow.create({
+      return db.relationships.create({
         data: follow,
       });
     })
   );
 
-  return await db.follow.findMany();
+  return await db.relationships.findMany();
 }

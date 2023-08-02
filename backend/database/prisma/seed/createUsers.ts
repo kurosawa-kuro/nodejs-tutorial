@@ -3,7 +3,12 @@
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { db } from "../prismaClient";
-import { AdminData, User2Data, UserData } from "../../../__test__/testData";
+import {
+  AdminData,
+  UserData,
+  User2Data,
+  User3Data,
+} from "../../../__test__/testData";
 
 export async function createUsers() {
   const users = [
@@ -11,27 +16,34 @@ export async function createUsers() {
       id: 1,
       name: AdminData.name,
       email: AdminData.email,
-      password: AdminData.password,
-      isAdmin: AdminData.isAdmin,
+      password_digest: AdminData.password_digest,
+      admin: AdminData.admin,
     },
     {
       id: 2,
       name: UserData.name,
       email: UserData.email,
-      password: UserData.password,
-      isAdmin: UserData.isAdmin,
+      password_digest: UserData.password_digest,
+      admin: UserData.admin,
     },
     {
       id: 3,
       name: User2Data.name,
       email: User2Data.email,
-      password: User2Data.password,
-      isAdmin: User2Data.isAdmin,
+      password_digest: User2Data.password_digest,
+      admin: User2Data.admin,
+    },
+    {
+      id: 4,
+      name: User3Data.name,
+      email: User3Data.email,
+      password_digest: User3Data.password_digest,
+      admin: User3Data.admin,
     },
   ];
 
   const hashedPasswords = await Promise.all(
-    users.map((user) => bcrypt.hash(user.password, 10))
+    users.map((user) => bcrypt.hash(user.password_digest, 10))
   );
 
   await Promise.all(
@@ -40,9 +52,9 @@ export async function createUsers() {
         data: {
           id: user.id,
           name: user.name,
-          password: hashedPasswords[index],
+          password_digest: hashedPasswords[index],
           email: user.email,
-          isAdmin: user.isAdmin,
+          admin: user.admin,
         },
       });
     })
