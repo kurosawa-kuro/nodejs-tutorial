@@ -7,9 +7,10 @@ import { createPosts } from "./createPosts";
 import { createTags } from "./createTags";
 import { createPostTags } from "./createPostTags";
 import { readAllPostTags } from "./readAllPostTags";
+import { readSpecificUserPosts } from "./readSpecificUserPosts";
 import { readSpecificPostTags } from "./readSpecificPostTags";
-import { readSpecificTagPosts } from "./readSpecificTagPosts";
-import { readUsersFollowedBySpecificUser } from "./readUsersFollowedBySpecificUser";
+// import { readSpecificTagPosts } from "./readSpecificTagPosts";
+import { readFollowedUsersByFollowerId } from "./readFollowedUsersByFollowerId";
 import { readUsersFollowingSpecificUser } from "./readUsersFollowingSpecificUser";
 import { createUsersAndFollows } from "./createUsersAndFollows";
 import { readFollowStatusOfAllUsersForSpecificUser } from "./readFollowStatusOfAllUsersForSpecificUser";
@@ -42,6 +43,11 @@ async function main() {
       followsEntities
     );
 
+    console.log("main.js readSpecificUserPosts()");
+    const specificPostTags = await readSpecificUserPosts();
+    console.log("main.js readSpecificUserPosts() readSpecificUserPosts:");
+    console.dir(specificPostTags, { depth: null });
+
     // console.log("main.js readAllPostTags()");
     // const allPostTags = await readAllPostTags();
     // console.log("main.js readAllPostTags() allPostTags:");
@@ -57,12 +63,8 @@ async function main() {
     // console.log("main.js readSpecificTagPosts() specificTagPosts:");
     // console.dir(specificTagPosts, { depth: null });
 
-    // console.log("main.js readUsersFollowedBySpecificUser()");
-    // const specificFollows = await readUsersFollowedBySpecificUser();
-    // console.log(
-    //   "main.js readUsersFollowedBySpecificUser() specificFollows:",
-    //   specificFollows
-    // );
+    const follower = await readFollowedUsersByFollowerId();
+    console.log("main.js readFollowedUsersByFollowerId() follower:", follower);
 
     // console.log("main.js readUsersFollowingSpecificUser()");
     // const specificFollowers = await readUsersFollowingSpecificUser();

@@ -5,21 +5,20 @@ import { db } from "../prismaClient";
 export async function readAllPostTags() {
   return await db.tagsOnPosts.findMany({
     include: {
-      post: {
+      microposts: {
         include: {
           user: {
             select: {
               id: true,
               name: true,
               email: true,
-              isAdmin: true,
-              createdAt: true,
-              updatedAt: true,
+              admin: true,
+              created_at: true,
+              updated_at: true,
             },
           },
         },
       },
-      tag: true,
     },
   });
 }
