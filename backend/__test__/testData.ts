@@ -2,7 +2,7 @@
 export const AdminData = {
   name: "Admin",
   email: "admin@email.com",
-  password_digest: "123456",
+  password: "123456",
   admin: true,
   token: "adminToken",
 };
@@ -10,7 +10,7 @@ export const AdminData = {
 export const UserData = {
   name: "User",
   email: "user@email.com",
-  password_digest: "123456",
+  password: "123456",
   admin: false,
   token: "userToken",
 };
@@ -18,7 +18,7 @@ export const UserData = {
 export const User2Data = {
   name: "User2",
   email: "user2@email.com",
-  password_digest: "123456",
+  password: "123456",
   admin: false,
   token: "user2Token",
 };
@@ -26,7 +26,7 @@ export const User2Data = {
 export const User3Data = {
   name: "User3",
   email: "user3@email.com",
-  password_digest: "123456",
+  password: "123456",
   admin: false,
   token: "user3Token",
 };

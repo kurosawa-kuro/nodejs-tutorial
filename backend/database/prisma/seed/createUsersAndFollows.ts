@@ -2,16 +2,19 @@
 
 import { User } from "@prisma/client";
 import { db } from "../prismaClient";
+import { hashPassword } from "../../../utils";
 
 export async function createUsersAndFollows() {
-  const data = Array.from({ length: 8 }, (_, i) => {
+  const dataPromises = Array.from({ length: 8 }, async (_, i) => {
     const userNumber = i + 4;
     return {
       email: `user${userNumber}@email.com`,
       name: `User${userNumber}`,
-      password_digest: "123456",
+      password_digest: await hashPassword("123456"),
     };
   });
+
+  const data = await Promise.all(dataPromises);
 
   await db.user.createMany({
     data,
